@@ -73,7 +73,7 @@ router.get('/posts/hashtag/:title', verifyToken, async (req, res) => {
                 message: '검색 결과가 없습니다',
             });
         }
-        const posts = hashtag.getPosts();
+        const posts = await hashtag.getPosts();
         return res.json({
             code: 200,
             payload: posts,
