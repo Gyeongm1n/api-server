@@ -48,6 +48,18 @@ exports.apiLimiter = new RateLimit({
     },
 });
 
+exports.apiLimiter_P = new RateLimit({
+    windowMs: 60 * 1000,
+    max: 100,
+    delayMs: 0,
+    handler(req, res) {
+        res.status(this.statusCode).json({
+            code: this.statusCode,
+            message: '1분에 열 번만 요청할 수 있습니다.',
+        });
+    },
+});
+
 exports.deprecated = (req, res) => {
     res.status(410).json({
         code: 410,

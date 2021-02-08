@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const url = require('url');
 
-const {verifyToken, apiLimiter} = require('./middlewares');
+const {verifyToken, apiLimiter, apiLimiter_P} = require('./middlewares');
 const {Domain, User, Post, Hashtag} = require('../models');
 
 const router = express.Router();
@@ -13,6 +13,11 @@ router.use(async (req, res, next) => {
         where: {host: url.parse(req.get('origin')).host},
     });
     if(domain) {
+        if(domain.type === 'free'){
+            req.type = 'free';
+        }else{
+            req.type = 'premium';
+        }
         cors({
             origin: req.get('origin'),
             credentials: true,
@@ -63,7 +68,7 @@ router.get('/test', verifyToken, apiLimiter, (req, res) => {
     res.json(req.decoded);
 });
 
-router.get('/posts/my', apiLimiter, verifyToken, (req, res) => {
+router.get('/posts/my', verifyToken, apiLimiter, (req, res) => {
     Post.findAll({where: {UserId: req.decoded.id}})
         .then((posts) => {
             console.log(posts);
